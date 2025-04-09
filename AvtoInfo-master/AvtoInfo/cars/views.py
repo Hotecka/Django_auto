@@ -15,14 +15,15 @@ if TYPE_CHECKING:
 
 def get_cars(request: "HttpRequest") -> "HttpResponse":
     """
-    Представление для получения всех машин
+    Представление для получения всех машин.
+    Отображает список всех автомобилей, отсортированных по ID.
     """
 
-    queryset = Car.objects.order_by("id")
+    queryset = Car.objects.order_by("id")  # Получаем все автомобили, отсортированные по ID
 
     context: dict = {
-        "title": "Cars - Home",
-        "cars": queryset,
+        "title": "Cars - Home",  # Название страницы
+        "cars": queryset,  # Список машин для отображения в шаблоне
     }
     return render(request, "cars/cars.html", context)
 
@@ -30,22 +31,24 @@ def get_cars(request: "HttpRequest") -> "HttpResponse":
 @login_required
 def add_car(request: "HttpRequest") -> "HttpResponse":
     """
-    Представление для добавления новой машины
+    Представление для добавления новой машины.
+    Только для аутентифицированных пользователей. 
+    Создаёт машину с привязкой к текущему пользователю как владельцу.
     """
 
     if request.method == "POST":
-        form = CarForm(request.POST)
+        form = CarForm(request.POST)  # Получаем данные формы из POST-запроса
         if form.is_valid():
-            car = form.save(commit=False)
-            car.owner = request.user
-            car.save()
-            return redirect(reverse("users:profile"))
+            car = form.save(commit=False)  # Создаём объект машины, но не сохраняем его сразу
+            car.owner = request.user  # Привязываем владельца
+            car.save()  # Сохраняем машину в базе данных
+            return redirect(reverse("users:profile"))  # Перенаправляем на профиль пользователя
     else:
-        form = CarForm()
+        form = CarForm()  # Если запрос GET, создаём пустую форму
 
     context = {
-        "title": "Добавить машину",
-        "form": form,
+        "title": "Добавить машину",  # Заголовок страницы
+        "form": form,  # Передаем форму в контекст для отображения
     }
 
     return render(request, "cars/add_car.html", context)
@@ -53,29 +56,30 @@ def add_car(request: "HttpRequest") -> "HttpResponse":
 
 def car_detail(request, car_id):
     """
-    Представление с информацией о конкретном автомобиле и комментариями, а также форма для добавления комментариев
+    Представление с информацией о конкретном автомобиле и комментариями,
+    а также форма для добавления комментариев.
     """
 
-    car = get_object_or_404(Car, id=car_id)
-    comments = Comment.objects.filter(car=car)
+    car = get_object_or_404(Car, id=car_id)  # Получаем объект машины по ID, если нет — 404 ошибка
+    comments = Comment.objects.filter(car=car)  # Получаем все комментарии для этой машины
 
     if request.method == "POST":
-        content = request.POST.get("content")
+        content = request.POST.get("content")  # Получаем текст комментария из формы
 
         if not request.user.is_authenticated:
-            return redirect("users:login")
+            return redirect("users:login")  # Если пользователь не авторизован, перенаправляем на страницу логина
 
-        Comment.objects.create(
+        Comment.objects.create(  # Создаём новый комментарий
             content=content,
-            car=car,
-            author=request.user,
+            car=car,  # Привязываем комментарий к машине
+            author=request.user,  # Устанавливаем автора комментария
         )
 
-        return HttpResponseRedirect(reverse("cars:car_detail", args=[car_id]))
+        return HttpResponseRedirect(reverse("cars:car_detail", args=[car_id]))  # Перенаправляем на текущую страницу машины
 
     context = {
-        "car": car,
-        "comments": comments,
+        "car": car,  # Передаем машину в контекст для отображения
+        "comments": comments,  # Передаем комментарии для отображения
     }
 
     return render(request, "cars/car_detail.html", context)
@@ -84,25 +88,26 @@ def car_detail(request, car_id):
 @login_required
 def edit_car(request, car_id):
     """
-    Представление для изменеия данных о машине
+    Представление для изменения данных о машине.
+    Позволяет владельцу машины изменять её данные.
     """
 
-    car = get_object_or_404(
+    car = get_object_or_404(  # Получаем объект машины по ID и проверяем, что владелец — текущий пользователь
         Car,
         id=car_id,
-        owner=request.user,
+        owner=request.user,  # Только если текущий пользователь является владельцем
     )
 
     if request.method == "POST":
-        car.make = request.POST.get("make")
-        car.model = request.POST.get("model")
-        car.year = request.POST.get("year")
-        car.description = request.POST.get("description")
-        car.save()
-        return redirect(reverse("users:profile"))
+        car.make = request.POST.get("make")  # Обновляем марку машины
+        car.model = request.POST.get("model")  # Обновляем модель машины
+        car.year = request.POST.get("year")  # Обновляем год выпуска
+        car.description = request.POST.get("description")  # Обновляем описание
+        car.save()  # Сохраняем изменения
+        return redirect(reverse("users:profile"))  # Перенаправляем на страницу профиля пользователя
 
     context = {
-        "car": car,
+        "car": car,  # Передаем машину для редактирования в контекст
     }
 
     return render(request, "cars/edit_car.html", context)
@@ -111,8 +116,10 @@ def edit_car(request, car_id):
 @login_required
 def delete_car(request, car_id):
     """
-    Представление для удаления машины
+    Представление для удаления машины.
+    Удаляет машину, если текущий пользователь — её владелец.
     """
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-    car.delete()
-    return redirect(reverse("users:profile"))
+
+    car = get_object_or_404(Car, id=car_id, owner=request.user)  # Получаем объект машины, только если текущий пользователь — её владелец
+    car.delete()  # Удаляем машину из базы данных
+    return redirect(reverse("users:profile"))  # Перенаправляем на профиль пользователя
