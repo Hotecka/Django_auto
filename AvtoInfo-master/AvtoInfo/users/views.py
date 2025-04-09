@@ -18,6 +18,11 @@ if TYPE_CHECKING:
 
 
 def login(request: "HttpRequest") -> "HttpResponse":
+    """
+    Представление для авторизации пользователя.
+    Проверяет данные формы, а затем аутентифицирует пользователя.
+    Перенаправляет на страницу списка машин в случае успеха.
+    """
 
     if request.method == "POST":
         form = UserLoginForm(data=request.POST)
@@ -28,39 +33,43 @@ def login(request: "HttpRequest") -> "HttpResponse":
             user = auth.authenticate(username=username, password=password)
 
             if user:
-                auth.login(request, user)
-                return HttpResponseRedirect(reverse("cars:home"))
+                auth.login(request, user)  # Аутентификация пользователя
+                return HttpResponseRedirect(reverse("cars:home"))  # Перенаправление на главную страницу машин
             else:
-                form.add_error(None, "Неверный логин или пароль")
+                form.add_error(None, "Неверный логин или пароль")  # Ошибка при неверном логине или пароле
     else:
-        form = UserLoginForm()
+        form = UserLoginForm()  # Создаём пустую форму, если запрос GET
 
     context = {
-        "title": "AvtoInfo - Authentication",
-        "form": form,
+        "title": "AvtoInfo - Authentication",  # Заголовок страницы
+        "form": form,  # Передаем форму в контекст
     }
 
     return render(request, "users/login.html", context)
 
 
 def registration(request: "HttpRequest") -> "HttpResponse":
+    """
+    Представление для регистрации нового пользователя.
+    После успешной регистрации автоматически авторизует пользователя и перенаправляет на его профиль.
+    """
 
     if request.method == "POST":
         form = UserRegistrationForm(data=request.POST)
 
         if form.is_valid():
-            form.save()
+            form.save()  # Сохраняем нового пользователя
 
-            user = form.instance
-            auth.login(request, user)
+            user = form.instance  # Получаем зарегистрированного пользователя
+            auth.login(request, user)  # Авторизуем пользователя
 
-            return HttpResponseRedirect(reverse("users:profile"))
+            return HttpResponseRedirect(reverse("users:profile"))  # Перенаправление на профиль пользователя
     else:
-        form = UserRegistrationForm()
+        form = UserRegistrationForm()  # Создаём пустую форму для регистрации
 
     context = {
-        "title": "AvtoInfo - Registration",
-        "form": form,
+        "title": "AvtoInfo - Registration",  # Заголовок страницы
+        "form": form,  # Передаем форму в контекст
     }
 
     return render(request, "users/registration.html", context)
@@ -68,26 +77,30 @@ def registration(request: "HttpRequest") -> "HttpResponse":
 
 @login_required
 def profile(request: "HttpRequest") -> "HttpResponse":
+    """
+    Представление профиля пользователя.
+    Показывает информацию о пользователе и его машины, а также форму для редактирования профиля.
+    """
 
-    user_cars = Car.objects.filter(owner=request.user)
+    user_cars = Car.objects.filter(owner=request.user)  # Получаем все машины пользователя
     if request.method == "POST":
         form = UserProfileForm(
             data=request.POST,
-            instance=request.user,
+            instance=request.user,  # Заполняем форму данными текущего пользователя
         )
 
         if form.is_valid():
-            form.save()
+            form.save()  # Сохраняем обновления профиля
 
-            return HttpResponseRedirect(reverse("users:profile"))
+            return HttpResponseRedirect(reverse("users:profile"))  # Перенаправление на профиль после сохранения
 
     else:
-        form = UserProfileForm(instance=request.user)
+        form = UserProfileForm(instance=request.user)  # Создаем форму с текущими данными пользователя
 
     context = {
-        "title": "AvtoInfo - Profile",
-        "user_cars": user_cars,
-        "form": form,
+        "title": "AvtoInfo - Profile",  # Заголовок страницы
+        "user_cars": user_cars,  # Список машин пользователя
+        "form": form,  # Форма редактирования профиля
     }
 
     return render(request, "users/profile.html", context)
@@ -95,5 +108,9 @@ def profile(request: "HttpRequest") -> "HttpResponse":
 
 @login_required
 def logout(request: "HttpRequest") -> "HttpResponse":
-    auth.logout(request)
-    return redirect(reverse("users:login"))
+    """
+    Представление для выхода пользователя из системы.
+    Завершается выходом и перенаправлением на страницу входа.
+    """
+    auth.logout(request)  # Выход пользователя из системы
+    return redirect(reverse("users:login"))  # Перенаправление на страницу входа
