@@ -1,0 +1,38 @@
+services:
+  db:
+    container_name: avtoinfo
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=AvtoInfo
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - app:/data/avtoinfo
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    depends_on:
+      - db
+    command: ["/app/scripts/dockerstart.sh"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  app:

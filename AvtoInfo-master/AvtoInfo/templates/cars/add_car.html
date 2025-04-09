@@ -1,0 +1,31 @@
+{% extends "cars/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Добавление машины</h2>
+    <form action="{% url 'cars:add_car' %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_make" class="form-label">Марка</label>
+            <input type="text" class="form-control" id="id_make" name="make" placeholder="Введите марку автомобиля" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_model" class="form-label">Модель</label>
+            <input type="text" class="form-control" id="id_model" name="model" placeholder="Введите модель автомобиля" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_year" class="form-label">Год выпуска</label>
+            <input type="number" class="form-control" id="id_year" name="year" min="1960" placeholder="Введите год выпуска" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Описание</label>
+            <textarea class="form-control" id="id_description" name="description" rows="3" placeholder="Опишите автомобиль"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Добавить машину</button>        
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'cars/base.html' %}
+{% load static %}
+
+{% block title %}{{ car.make }} {{ car.model }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ car.make }} {{ car.model }} ({{ car.year }})</h2>
+    <p>{{ car.description }}</p>
+    <hr>
+    <h4>Комментарии:</h4>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.author }}: {{ comment.content }} ({{ comment.created_at }})</li>
+        {% empty %}
+            <li>Комментариев пока нет.</li>
+        {% endfor %}
+    </ul>
+    <h4>Добавить комментарий:</h4>
+    <form action="{% url 'cars:car_detail' car.id %}" method="post">
+        {% csrf_token %}
+        <textarea class="form-control" name="content" placeholder="Оставьте ваш комментарий" required></textarea>
+        <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+    </form>
+</div>
+{% endblock %}
