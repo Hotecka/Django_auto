@@ -21,7 +21,7 @@
 Откройте терминал и выполните следующую команду для клонирования репозитория:
 ```
 ```bash
-git clone https://github.com/1eo1eo1eo/AvtoInfo.git
+git clone https://github.com/Hotecka/AvtoInfo.git
 ```
 
 2. **Перейдите в директорию проекта:**
