@@ -1,13 +1,17 @@
 from django import forms
 from cars.models import Car
 
-
 class CarForm(forms.ModelForm):
+    """
+    Форма для добавления или редактирования информации о машине.
+    Использует модель Car, чтобы обеспечить связь между данными формы и полями модели.
+    """
+
     class Meta:
-        model = Car
+        model = Car  # Указываем, что форма связана с моделью Car
         fields = [
-            "make",
-            "model",
-            "year",
-            "description",
+            "make",        # Поле для марки автомобиля
+            "model",       # Поле для модели автомобиля
+            "year",        # Поле для года выпуска автомобиля
+            "description", # Поле для описания автомобиля (необязательное)
         ]
