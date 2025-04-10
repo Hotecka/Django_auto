@@ -1,26 +1,29 @@
-{% extends 'cars/base.html' %}
-{% load static %}
+{% extends 'cars/base.html' %}  <!-- Наследуемся от базового шаблона для использования общего оформления -->
 
-{% block title %}{{ car.make }} {{ car.model }}{% endblock %}
+{% load static %}  
 
-{% block content %}
-<div class="container mt-5">
-    <h2>{{ car.make }} {{ car.model }} ({{ car.year }})</h2>
-    <p>{{ car.description }}</p>
-    <hr>
-    <h4>Комментарии:</h4>
+{% block title %}{{ car.make }} {{ car.model }}{% endblock %}  <!-- Блок заголовка страницы, отображаем марку и модель автомобиля -->
+
+{% block content %}  <!-- Блок контента страницы -->
+<div class="container mt-5">  
+    <h2>{{ car.make }} {{ car.model }} ({{ car.year }})</h2>  <!-- Заголовок страницы с маркой, моделью и годом выпуска автомобиля -->
+    <p>{{ car.description }}</p>  <!-- Описание автомобиля -->
+    <hr> 
+    
+    <h4>Комментарии:</h4> 
     <ul>
-        {% for comment in comments %}
-            <li>{{ comment.author }}: {{ comment.content }} ({{ comment.created_at }})</li>
+        {% for comment in comments %}  <!-- Перебираем все комментарии -->
+            <li>{{ comment.author }}: {{ comment.content }} ({{ comment.created_at }})</li>  <!-- Отображаем автора, содержимое и дату комментария -->
         {% empty %}
-            <li>Комментариев пока нет.</li>
+            <li>Комментариев пока нет.</li>  <!-- Если комментариев нет, выводим сообщение -->
         {% endfor %}
     </ul>
-    <h4>Добавить комментарий:</h4>
-    <form action="{% url 'cars:car_detail' car.id %}" method="post">
-        {% csrf_token %}
-        <textarea class="form-control" name="content" placeholder="Оставьте ваш комментарий" required></textarea>
-        <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+    
+    <h4>Добавить комментарий:</h4>  
+    <form action="{% url 'cars:car_detail' car.id %}" method="post">  <!-- Форма для отправки нового комментария на страницу этого автомобиля -->
+        {% csrf_token %}  <!-- Тег для защиты от CSRF атак -->
+        <textarea class="form-control" name="content" placeholder="Оставьте ваш комментарий" required></textarea>  <!-- Поле для ввода комментария -->
+        <button type="submit" class="btn btn-primary mt-2">Отправить</button>  <!-- Кнопка для отправки комментария -->
     </form>
 </div>
 {% endblock %}
