@@ -1,18 +1,20 @@
-{% extends 'cars/base.html' %}
-{% load static %}
+{% extends 'cars/base.html' %} 
 
-{% block title %}{{ title }}{% endblock %}
+{% load static %}  
 
-{% block content %}
-    <div class="container mt-5">
-        <h2>Доступные машины</h2>
-        <ul class="list-group">
-            {% for car in cars %}
-                <li class="list-group-item">
-                    <a href="{% url 'cars:car_detail' car.id %}">{{ car.make }} {{ car.model }} ({{ car.year }})</a>
+{% block title %}{{ title }}{% endblock %}  
+{% block content %}  <!-- Блок контента страницы -->
+    <div class="container mt-5">  <!-- Контейнер с отступом сверху -->
+        <h2>Доступные машины</h2>  <!-- Заголовок страницы -->
+        
+        <ul class="list-group">  <!-- Список для отображения машин -->
+            {% for car in cars %}  <!-- Перебираем все доступные машины -->
+                <li class="list-group-item">  <!-- Каждый элемент списка для автомобиля -->
+                    <a href="{% url 'cars:car_detail' car.id %}">{{ car.make }} {{ car.model }} ({{ car.year }})</a>  <!-- Ссылка на страницу подробностей автомобиля -->
                 </li>
             {% endfor %}
         </ul>
-        <a href="{% url 'cars:add_car' %}" class="btn btn-primary mt-3">Добавить машину</a>
+        
+        <a href="{% url 'cars:add_car' %}" class="btn btn-primary mt-3">Добавить машину</a>  <!-- Кнопка для добавления нового автомобиля -->
     </div>
 {% endblock %}
