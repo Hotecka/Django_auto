@@ -1,37 +1,48 @@
-{% extends "cars/base.html" %}
-{% load static %}
+{% extends "cars/base.html" %} 
 
-{% block content %}
+{% load static %}  
+
+{% block content %} 
 <div class="row">
     <div class="container mt-5">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center">  
             <div class="col-md-6 bg-white p-4 mb-4 mx-3 rounded custom-shadow">
-                <h2 class="text-center mb-4">Аутентификация</h2>
+                <h2 class="text-center mb-4">Аутентификация</h2> 
 
+                <!-- Ошибки формы -->
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}
-                            {{ error }}
+                            {{ error }}  <!-- Выводим все ошибки формы -->
                         {% endfor %}
                     </div>
                 {% endif %}
 
-                <form action="{% url "users:login" %}" method="post">
-                    {% csrf_token %}
+                <!-- Форма входа -->
+                <form action="{% url 'users:login' %}" method="post">
+                    {% csrf_token %}  <!-- Токен для защиты от CSRF-атак -->
+                    
+                    <!-- Поле для ввода логина -->
                     <div class="mb-3">
                         <label for="id_username" class="form-label">Логин</label>
                         <input type="text" class="form-control" name="username" id="id_username"
                         value="{% if form.username.value %}{{ form.username.value }}{% endif %}"
                         placeholder="Введите ваш логин" required>
                     </div>
+                    
+                    <!-- Поле для ввода пароля -->
                     <div class="mb-3">
                         <label for="id_password" class="form-label">Пароль</label>
                         <input type="password" class="form-control" name="password" id="id_password" placeholder="Введите ваш пароль" required>
                     </div>
+                    
+                    <!-- Кнопка для отправки формы -->
                     <button type="submit" class="btn btn-dark btn-block">Войти</button>
                 </form>
+                
+                <!-- Ссылка для перехода к странице регистрации -->
                 <div class="mt-3">
-                    <a href="{% url "users:registration" %}">Регистрация</a>
+                    <a href="{% url 'users:registration' %}">Регистрация</a>
                 </div>
                 <hr>
             </div>
