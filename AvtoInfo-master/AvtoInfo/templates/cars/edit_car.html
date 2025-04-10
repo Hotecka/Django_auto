@@ -1,28 +1,43 @@
-{% extends "cars/base.html" %}
-{% load static %}
+{% extends "cars/base.html" %}  <!-- Наследуемся от базового шаблона для использования общего оформления -->
 
-{% block content %}
-<div class="container mt-5">
-    <h2>Редактирование машины: {{ car.make }} {{ car.model }}</h2>
-    <form action="{% url 'cars:edit_car' car.id %}" method="post">
-        {% csrf_token %}
+{% load static %}  <!-- Загружаем статические файлы -->
+
+{% block content %} 
+<div class="container mt-5">  
+    <h2>Редактирование машины: {{ car.make }} {{ car.model }}</h2>  
+    
+    <!-- Форма редактирования машины -->
+    <form action="{% url 'cars:edit_car' car.id %}" method="post">  <!-- Указываем URL для обработки формы и метод POST -->
+        {% csrf_token %}  <!-- Токен защиты от CSRF-атак -->
+        
+        <!-- Поле для ввода марки автомобиля -->
         <div class="mb-3">
             <label for="make" class="form-label">Марка</label>
-            <input type="text" class="form-control" id="make" name="make" value="{{ car.make }}" required>
+            <input type="text" class="form-control" id="make" name="make" value="{{ car.make }}" required>  <!-- Значение поля подставляется из текущего объекта car -->
         </div>
+        
+        <!-- Поле для ввода модели автомобиля -->
         <div class="mb-3">
             <label for="model" class="form-label">Модель</label>
-            <input type="text" class="form-control" id="model" name="model" value="{{ car.model }}" required>
+            <input type="text" class="form-control" id="model" name="model" value="{{ car.model }}" required>  <!-- Значение поля подставляется из текущего объекта car -->
         </div>
+        
+        <!-- Поле для ввода года выпуска автомобиля -->
         <div class="mb-3">
             <label for="year" class="form-label">Год выпуска</label>
-            <input type="number" class="form-control" id="year" name="year" value="{{ car.year }}" min="1960" required>
+            <input type="number" class="form-control" id="year" name="year" value="{{ car.year }}" min="1960" required>  <!-- Значение поля подставляется из текущего объекта car -->
         </div>
+        
+        <!-- Поле для ввода описания автомобиля -->
         <div class="mb-3">
             <label for="description" class="form-label">Описание</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required>{{ car.description }}</textarea>
+            <textarea class="form-control" id="description" name="description" rows="4" required>{{ car.description }}</textarea>  <!-- Значение поля подставляется из текущего объекта car -->
         </div>
+        
+        <!-- Кнопка для сохранения изменений -->
         <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        
+        <!-- Ссылка для возврата в профиль пользователя -->
         <a href="{% url 'users:profile' %}" class="btn btn-secondary">Назад в профиль</a>
     </form>
 </div>
